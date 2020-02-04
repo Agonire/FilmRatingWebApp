@@ -1,0 +1,1 @@
+DROP DATABASE IF EXISTS `created_from_script_test`;
