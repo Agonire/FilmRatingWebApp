@@ -12,18 +12,32 @@ import org.springframework.core.env.Environment;
 import org.springframework.orm.hibernate5.HibernateTransactionManager;
 import org.springframework.orm.hibernate5.LocalSessionFactoryBean;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
+import org.springframework.web.servlet.ViewResolver;
+import org.springframework.web.servlet.config.annotation.EnableWebMvc;
+import org.springframework.web.servlet.view.InternalResourceViewResolver;
 
 import javax.sql.DataSource;
 import java.util.Properties;
 
 @Configuration
+@EnableWebMvc
 @PropertySource(value = "classpath:db/db.properties")
 @EnableTransactionManagement
-@ComponentScan({"data.dao", "mvc.config", "mvc.service"})
+@ComponentScan({"data.dao", "mvc"})
 public class BeanConfiguration {
 
     @Autowired
     Environment env;
+
+    @Bean
+    public ViewResolver viewResolver(){
+        InternalResourceViewResolver viewResolver = new InternalResourceViewResolver();
+
+        viewResolver.setPrefix("/WEB-INF/views/");
+        viewResolver.setSuffix(".jsp");
+
+        return viewResolver;
+    }
 
     @Bean
     public DataSource getDataSource() {
