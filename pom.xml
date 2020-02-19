@@ -17,10 +17,11 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.source>1.7</maven.compiler.source>
         <maven.compiler.target>1.7</maven.compiler.target>
-        <tomcat7.server.port>8080</tomcat7.server.port>
+        <tomcat.server.port>8080</tomcat.server.port>
         <browser.launch.script>.\browserLaunch.ps1</browser.launch.script>
         <maven.compiler.plugin.version>3.8.0</maven.compiler.plugin.version>
-        <spring.version>5.2.2.RELEASE</spring.version>
+        <spring.framework.version>5.2.2.RELEASE</spring.framework.version>
+        <spring.security.version>5.2.2.RELEASE</spring.security.version>
         <jdbc.driver>com.mysql.cj.jdbc.Driver</jdbc.driver>
         <jdbc.url>jdbc:mysql://localhost:3306/</jdbc.url>
         <jdbc.schemas>created_from_script_test</jdbc.schemas>
@@ -30,6 +31,7 @@
 
 
     <dependencies>
+        <!-- JUnit -->
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
@@ -46,37 +48,37 @@
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-core</artifactId>
-            <version>${spring.version}</version>
+            <version>${spring.framework.version}</version>
         </dependency>
         <!-- https://mvnrepository.com/artifact/org.springframework/spring-beans -->
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-beans</artifactId>
-            <version>${spring.version}</version>
+            <version>${spring.framework.version}</version>
         </dependency>
         <!-- https://mvnrepository.com/artifact/org.springframework/spring-context -->
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-context</artifactId>
-            <version>${spring.version}</version>
+            <version>${spring.framework.version}</version>
         </dependency>
         <!-- https://mvnrepository.com/artifact/org.springframework/spring-web -->
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-web</artifactId>
-            <version>${spring.version}</version>
+            <version>${spring.framework.version}</version>
         </dependency>
         <!-- https://mvnrepository.com/artifact/org.springframework/spring-webmvc -->
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-webmvc</artifactId>
-            <version>${spring.version}</version>
+            <version>${spring.framework.version}</version>
         </dependency>
         <!-- https://mvnrepository.com/artifact/org.springframework/spring-orm -->
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-orm</artifactId>
-            <version>${spring.version}</version>
+            <version>${spring.framework.version}</version>
         </dependency>
 
 
@@ -84,16 +86,28 @@
 <!--        <dependency>-->
 <!--            <groupId>org.springframework</groupId>-->
 <!--            <artifactId>spring-tx</artifactId>-->
-<!--            <version>${spring.version}</version>-->
+<!--            <version>${spring.framework.version}</version>-->
 <!--        </dependency>-->
 <!--        &lt;!&ndash; https://mvnrepository.com/artifact/org.springframework/spring-jdbc &ndash;&gt;-->
 <!--        <dependency>-->
 <!--            <groupId>org.springframework</groupId>-->
 <!--            <artifactId>spring-jdbc</artifactId>-->
-<!--            <version>${spring.version}</version>-->
+<!--            <version>${spring.framework.version}</version>-->
 <!--        </dependency>-->
 <!--        -->
 
+        <!-- https://mvnrepository.com/artifact/org.springframework.security/spring-security-web -->
+        <dependency>
+            <groupId>org.springframework.security</groupId>
+            <artifactId>spring-security-web</artifactId>
+            <version>${spring.security.version}</version>
+        </dependency>
+        <!-- https://mvnrepository.com/artifact/org.springframework.security/spring-security-config -->
+        <dependency>
+            <groupId>org.springframework.security</groupId>
+            <artifactId>spring-security-config</artifactId>
+            <version>${spring.security.version}</version>
+        </dependency>
 
         <!-- Apache Commons DBCP -->
         <dependency>
@@ -188,29 +202,45 @@
                 </configuration>
             </plugin>
             <plugin>
-                <groupId>org.apache.tomcat.maven</groupId>
-                <artifactId>tomcat7-maven-plugin</artifactId>
-                <version>2.2</version>
+                <groupId>org.codehaus.cargo</groupId>
+                <artifactId>cargo-maven2-plugin</artifactId>
+                <version>1.7.6</version>
                 <executions>
                     <execution>
-                        <id>start-tomcat</id>
+                        <id>start-container</id>
                         <phase>pre-integration-test</phase>
                         <goals>
-                            <goal>run</goal>
+                            <goal>start</goal>
                         </goals>
                     </execution>
                     <execution>
-                        <id>stop-tomcat</id>
+                        <id>stop-container</id>
                         <phase>post-integration-test</phase>
                         <goals>
-                            <goal>shutdown</goal>
+                            <goal>stop</goal>
                         </goals>
                     </execution>
                 </executions>
                 <configuration>
-                    <port>${tomcat7.server.port}</port>
-                    <path>/</path>
-                    <fork>true</fork>
+                    <container>
+                        <containerId>tomcat9x</containerId>
+                        <type>embedded</type>
+                    </container>
+                    <configuration>
+                        <type>standalone</type>
+                        <home>${project.build.directory}/tomcatx</home>
+                        <properties>
+                            <cargo.servlet.port>${tomcat.server.port}</cargo.servlet.port>
+                            <cargo.logging>high</cargo.logging>
+                        </properties>
+                    </configuration>
+                    <deployables>
+                        <deployable>
+                            <properties>
+                                <context>/</context>
+                            </properties>
+                        </deployable>
+                    </deployables>
                 </configuration>
             </plugin>
             <plugin>
@@ -227,7 +257,7 @@
                 </executions>
                 <configuration>
                     <executable>powershell.exe</executable>
-                    <commandlineArgs>&amp; ${browser.launch.script} -port ${tomcat7.server.port}</commandlineArgs>
+                    <commandlineArgs>&amp; ${browser.launch.script} -port ${tomcat.server.port}</commandlineArgs>
                 </configuration>
             </plugin>
             <plugin>
