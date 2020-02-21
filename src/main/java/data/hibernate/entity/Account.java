@@ -15,19 +15,19 @@ public class Account {
     @Column(name = "id")
     int id;
 
-    @Column(name = "first_name")
-    String firstName;
+    @Column(name = "username")
+    String username;
 
-    @Column(name = "last_name")
-    String lastName;
+    @Column(name = "password")
+    String password;
 
     @ManyToOne
     @JoinColumn(name = "role_id")
     Role role;
 
     @Type(type = "numeric_boolean")
-    @Column(name = "banned")
-    boolean banned;
+    @Column(name = "enabled")
+    boolean enabled;
 
     @OneToMany(mappedBy = "owner", orphanRemoval = true,cascade = CascadeType.ALL)
     List<Rating> rates;
@@ -45,11 +45,11 @@ public class Account {
         this(firstName, lastName, role, false);
     }
 
-    public Account(String firstName, String lastName, Role role, boolean banned) {
-        this.firstName = firstName;
-        this.lastName = lastName;
+    public Account(String firstName, String lastName, Role role, boolean enabled) {
+        this.username = firstName;
+        this.password = lastName;
         this.role = role;
-        this.banned = banned;
+        this.enabled = enabled;
     }
 
     public int getId() {
@@ -60,20 +60,20 @@ public class Account {
         this.id = id;
     }
 
-    public String getFirstName() {
-        return firstName;
+    public String getUsername() {
+        return username;
     }
 
-    public void setFirstName(String firstName) {
-        this.firstName = firstName;
+    public void setUsername(String username) {
+        this.username = username;
     }
 
-    public String getLastName() {
-        return lastName;
+    public String getPassword() {
+        return password;
     }
 
-    public void setLastName(String lastName) {
-        this.lastName = lastName;
+    public void setPassword(String password) {
+        this.password = password;
     }
 
     public Role getRole() {
@@ -84,12 +84,12 @@ public class Account {
         this.role = role;
     }
 
-    public boolean isBanned() {
-        return banned;
+    public boolean isEnabled() {
+        return enabled;
     }
 
-    public void setBanned(boolean banned) {
-        this.banned = banned;
+    public void setEnabled(boolean enabled) {
+        this.enabled = enabled;
     }
 
     public List<Rating> getRates() {

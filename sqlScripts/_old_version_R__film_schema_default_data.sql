@@ -24,11 +24,14 @@ DROP TABLE IF EXISTS `account`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `account` (
   `id` int NOT NULL AUTO_INCREMENT,
-  `username` varchar(50) NOT NULL,
-  `password` varchar(80) NOT NULL,
-  `enabled` tinyint NOT NULL DEFAULT '1',
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+  `first_name` varchar(45) NOT NULL,
+  `last_name` varchar(45) NOT NULL,
+  `role_id` int DEFAULT NULL,
+  `banned` bit(1) NOT NULL DEFAULT b'0',
+  PRIMARY KEY (`id`),
+  KEY `role_id_idx` (`role_id`),
+  CONSTRAINT `role_id` FOREIGN KEY (`role_id`) REFERENCES `account_role` (`id`) ON DELETE SET NULL
+) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -37,35 +40,33 @@ CREATE TABLE `account` (
 
 LOCK TABLES `account` WRITE;
 /*!40000 ALTER TABLE `account` DISABLE KEYS */;
-INSERT INTO `account` VALUES (1,'Alex','{noop}123',1),(2,'Moder','{noop}123',0),(3,'User','{noop}123',1),(10,'Admin','{noop}123',1);
+INSERT INTO `account` VALUES (1,'Admin','Admin',1,_binary '\0'),(2,'Moder','Moder',3,_binary '\0'),(3,'User','User',2,_binary '\0'),(4,'User2','User2',2,_binary '\0');
 /*!40000 ALTER TABLE `account` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
--- Table structure for table `account_roles`
+-- Table structure for table `account_role`
 --
 
-DROP TABLE IF EXISTS `account_roles`;
+DROP TABLE IF EXISTS `account_role`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `account_roles` (
-  `account_id` int NOT NULL,
-  `role_id` int DEFAULT NULL,
-  KEY `account_id_fk_idx` (`account_id`),
-  KEY `role_id_fk_idx` (`role_id`),
-  CONSTRAINT `account_id_fk` FOREIGN KEY (`account_id`) REFERENCES `account` (`id`) ON DELETE CASCADE,
-  CONSTRAINT `role_id_fk` FOREIGN KEY (`role_id`) REFERENCES `role` (`id`) ON DELETE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+CREATE TABLE `account_role` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `role` varchar(45) NOT NULL DEFAULT 'user',
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `role_UNIQUE` (`role`)
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Dumping data for table `account_roles`
+-- Dumping data for table `account_role`
 --
 
-LOCK TABLES `account_roles` WRITE;
-/*!40000 ALTER TABLE `account_roles` DISABLE KEYS */;
-INSERT INTO `account_roles` VALUES (10,1),(10,2),(10,3),(1,2),(1,3),(2,2),(2,3),(3,3);
-/*!40000 ALTER TABLE `account_roles` ENABLE KEYS */;
+LOCK TABLES `account_role` WRITE;
+/*!40000 ALTER TABLE `account_role` DISABLE KEYS */;
+INSERT INTO `account_role` VALUES (1,'admin'),(3,'moderator'),(2,'user');
+/*!40000 ALTER TABLE `account_role` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
@@ -323,7 +324,7 @@ CREATE TABLE `genre` (
   `genre` varchar(45) NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `genre_UNIQUE` (`genre`)
-) ENGINE=InnoDB AUTO_INCREMENT=50 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -397,31 +398,6 @@ LOCK TABLES `rating` WRITE;
 /*!40000 ALTER TABLE `rating` DISABLE KEYS */;
 /*!40000 ALTER TABLE `rating` ENABLE KEYS */;
 UNLOCK TABLES;
-
---
--- Table structure for table `role`
---
-
-DROP TABLE IF EXISTS `role`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `role` (
-  `id` int NOT NULL AUTO_INCREMENT,
-  `role` varchar(45) NOT NULL DEFAULT 'user',
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `role_UNIQUE` (`role`)
-) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `role`
---
-
-LOCK TABLES `role` WRITE;
-/*!40000 ALTER TABLE `role` DISABLE KEYS */;
-INSERT INTO `role` VALUES (1,'ROLE_ADMIN'),(2,'ROLE_MODER'),(3,'ROLE_USER');
-/*!40000 ALTER TABLE `role` ENABLE KEYS */;
-UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
@@ -432,4 +408,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2020-02-21 21:06:42
+-- Dump completed on 2020-02-01 22:18:10

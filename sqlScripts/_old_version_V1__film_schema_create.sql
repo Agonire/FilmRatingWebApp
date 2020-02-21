@@ -18,26 +18,11 @@ CREATE SCHEMA IF NOT EXISTS `created_from_script_test` DEFAULT CHARACTER SET utf
 USE `created_from_script_test` ;
 
 -- -----------------------------------------------------
--- Table `created_from_script_test`.`account`
+-- Table `created_from_script_test`.`account_role`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `created_from_script_test`.`account` (
+CREATE TABLE IF NOT EXISTS `created_from_script_test`.`account_role` (
   `id` INT NOT NULL AUTO_INCREMENT,
-  `username` VARCHAR(50) NOT NULL,
-  `password` VARCHAR(80) NOT NULL,
-  `enabled` TINYINT NOT NULL DEFAULT '1',
-  PRIMARY KEY (`id`))
-ENGINE = InnoDB
-AUTO_INCREMENT = 10
-DEFAULT CHARACTER SET = utf8mb4
-COLLATE = utf8mb4_0900_ai_ci;
-
-
--- -----------------------------------------------------
--- Table `created_from_script_test`.`role`
--- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `created_from_script_test`.`role` (
-  `id` INT NOT NULL AUTO_INCREMENT,
-  `role` VARCHAR(45) NOT NULL,
+  `role` VARCHAR(45) NOT NULL DEFAULT 'user',
   PRIMARY KEY (`id`),
   UNIQUE INDEX `role_UNIQUE` (`role` ASC) VISIBLE)
 ENGINE = InnoDB
@@ -47,22 +32,21 @@ COLLATE = utf8mb4_0900_ai_ci;
 
 
 -- -----------------------------------------------------
--- Table `created_from_script_test`.`account_roles`
+-- Table `created_from_script_test`.`account`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `created_from_script_test`.`account_roles` (
-  `account_id` INT NOT NULL,
+CREATE TABLE IF NOT EXISTS `created_from_script_test`.`account` (
+  `id` INT NOT NULL AUTO_INCREMENT,
+  `first_name` VARCHAR(45) NOT NULL,
+  `last_name` VARCHAR(45) NOT NULL,
   `role_id` INT NULL DEFAULT NULL,
-  INDEX `account_id_fk_idx` (`account_id` ASC) VISIBLE,
-  INDEX `role_id_fk_idx` (`role_id` ASC) VISIBLE,
-  CONSTRAINT `account_id_fk`
-    FOREIGN KEY (`account_id`)
-    REFERENCES `created_from_script_test`.`account` (`id`)
-	ON DELETE CASCADE,
-  CONSTRAINT `role_id_fk`
+  `banned` BIT(1) NOT NULL DEFAULT b'0',
+  PRIMARY KEY (`id`),
+  INDEX `role_id_idx` (`role_id` ASC) VISIBLE,
+  CONSTRAINT `role_id`
     FOREIGN KEY (`role_id`)
-    REFERENCES `created_from_script_test`.`role` (`id`)
-	ON DELETE CASCADE)
+    REFERENCES `created_from_script_test`.`account_role` (`id`) ON DELETE SET NULL)
 ENGINE = InnoDB
+AUTO_INCREMENT = 10
 DEFAULT CHARACTER SET = utf8mb4
 COLLATE = utf8mb4_0900_ai_ci;
 
@@ -96,12 +80,10 @@ CREATE TABLE IF NOT EXISTS `created_from_script_test`.`comment` (
   INDEX `account_id_idx` (`account_id` ASC) VISIBLE,
   CONSTRAINT `account_id`
     FOREIGN KEY (`account_id`)
-    REFERENCES `created_from_script_test`.`account` (`id`)
-    ON DELETE CASCADE,
+    REFERENCES `created_from_script_test`.`account` (`id`) ON DELETE CASCADE,
   CONSTRAINT `film_id`
     FOREIGN KEY (`film_id`)
-    REFERENCES `created_from_script_test`.`film` (`id`)
-    ON DELETE CASCADE)
+    REFERENCES `created_from_script_test`.`film` (`id`) ON DELETE CASCADE)
 ENGINE = InnoDB
 AUTO_INCREMENT = 9
 DEFAULT CHARACTER SET = utf8mb4
@@ -118,12 +100,10 @@ CREATE TABLE IF NOT EXISTS `created_from_script_test`.`comment_liked_by` (
   INDEX `comment_id_fk_l_idx` (`comment_id` ASC) VISIBLE,
   CONSTRAINT `account_id_fk_l`
     FOREIGN KEY (`account_id`)
-    REFERENCES `created_from_script_test`.`account` (`id`)
-    ON DELETE CASCADE,
+    REFERENCES `created_from_script_test`.`account` (`id`) ON DELETE CASCADE,
   CONSTRAINT `comment_id_fk_l`
     FOREIGN KEY (`comment_id`)
-    REFERENCES `created_from_script_test`.`comment` (`id`)
-    ON DELETE CASCADE)
+    REFERENCES `created_from_script_test`.`comment` (`id`) ON DELETE CASCADE)
 ENGINE = InnoDB
 DEFAULT CHARACTER SET = utf8mb4
 COLLATE = utf8mb4_0900_ai_ci;
@@ -140,7 +120,7 @@ CREATE TABLE IF NOT EXISTS `created_from_script_test`.`participant` (
   PRIMARY KEY (`id`),
   UNIQUE INDEX `id_UNIQUE` (`id` ASC) VISIBLE)
 ENGINE = InnoDB
-AUTO_INCREMENT = 65
+AUTO_INCREMENT = 4
 DEFAULT CHARACTER SET = utf8mb4
 COLLATE = utf8mb4_0900_ai_ci;
 
@@ -155,12 +135,10 @@ CREATE TABLE IF NOT EXISTS `created_from_script_test`.`film_actors` (
   INDEX `participant_id_fk_idx` (`participant_id` ASC) VISIBLE,
   CONSTRAINT `film_id_fk`
     FOREIGN KEY (`film_id`)
-    REFERENCES `created_from_script_test`.`film` (`id`)
-    ON DELETE CASCADE,
+    REFERENCES `created_from_script_test`.`film` (`id`) ON DELETE CASCADE,
   CONSTRAINT `participant_id_fk`
     FOREIGN KEY (`participant_id`)
-    REFERENCES `created_from_script_test`.`participant` (`id`)
-    ON DELETE CASCADE)
+    REFERENCES `created_from_script_test`.`participant` (`id`) ON DELETE CASCADE)
 ENGINE = InnoDB
 DEFAULT CHARACTER SET = utf8mb4
 COLLATE = utf8mb4_0900_ai_ci;
@@ -176,12 +154,10 @@ CREATE TABLE IF NOT EXISTS `created_from_script_test`.`film_directors` (
   INDEX `participant_id_fk_idx` (`participant_id` ASC) VISIBLE,
   CONSTRAINT `film_id_fk_d`
     FOREIGN KEY (`film_id`)
-    REFERENCES `created_from_script_test`.`film` (`id`)
-    ON DELETE CASCADE,
+    REFERENCES `created_from_script_test`.`film` (`id`) ON DELETE CASCADE,
   CONSTRAINT `participant_id_fk_d`
     FOREIGN KEY (`participant_id`)
-    REFERENCES `created_from_script_test`.`participant` (`id`)
-    ON DELETE CASCADE)
+    REFERENCES `created_from_script_test`.`participant` (`id`) ON DELETE CASCADE)
 ENGINE = InnoDB
 DEFAULT CHARACTER SET = utf8mb4
 COLLATE = utf8mb4_0900_ai_ci;
@@ -196,7 +172,6 @@ CREATE TABLE IF NOT EXISTS `created_from_script_test`.`genre` (
   PRIMARY KEY (`id`),
   UNIQUE INDEX `genre_UNIQUE` (`genre` ASC) VISIBLE)
 ENGINE = InnoDB
-AUTO_INCREMENT = 50
 DEFAULT CHARACTER SET = utf8mb4
 COLLATE = utf8mb4_0900_ai_ci;
 
@@ -211,12 +186,10 @@ CREATE TABLE IF NOT EXISTS `created_from_script_test`.`film_genre` (
   INDEX `genre_id_fk_g_idx` (`genre_id` ASC) VISIBLE,
   CONSTRAINT `film_id_fk_g`
     FOREIGN KEY (`film_id`)
-    REFERENCES `created_from_script_test`.`film` (`id`)
-    ON DELETE CASCADE,
+    REFERENCES `created_from_script_test`.`film` (`id`) ON DELETE CASCADE,
   CONSTRAINT `genre_id_fk_g`
     FOREIGN KEY (`genre_id`)
-    REFERENCES `created_from_script_test`.`genre` (`id`)
-    ON DELETE CASCADE)
+    REFERENCES `created_from_script_test`.`genre` (`id`) ON DELETE CASCADE)
 ENGINE = InnoDB
 DEFAULT CHARACTER SET = utf8mb4
 COLLATE = utf8mb4_0900_ai_ci;
@@ -232,12 +205,10 @@ CREATE TABLE IF NOT EXISTS `created_from_script_test`.`film_idea_authors` (
   INDEX `film_id_fk_p_idx` (`film_id` ASC) VISIBLE,
   CONSTRAINT `film_id_fk_a`
     FOREIGN KEY (`film_id`)
-    REFERENCES `created_from_script_test`.`film` (`id`)
-    ON DELETE CASCADE,
+    REFERENCES `created_from_script_test`.`film` (`id`) ON DELETE CASCADE,
   CONSTRAINT `participant_id_fk_a`
     FOREIGN KEY (`participant_id`)
-    REFERENCES `created_from_script_test`.`participant` (`id`)
-    ON DELETE CASCADE)
+    REFERENCES `created_from_script_test`.`participant` (`id`) ON DELETE CASCADE)
 ENGINE = InnoDB
 DEFAULT CHARACTER SET = utf8mb4
 COLLATE = utf8mb4_0900_ai_ci;
@@ -253,12 +224,10 @@ CREATE TABLE IF NOT EXISTS `created_from_script_test`.`film_producers` (
   INDEX `film_id_fk_p_idx` (`film_id` ASC) VISIBLE,
   CONSTRAINT `film_id_fk_p`
     FOREIGN KEY (`film_id`)
-    REFERENCES `created_from_script_test`.`film` (`id`)
-    ON DELETE CASCADE,
+    REFERENCES `created_from_script_test`.`film` (`id`) ON DELETE CASCADE,
   CONSTRAINT `participant_id_fk_p`
     FOREIGN KEY (`participant_id`)
-    REFERENCES `created_from_script_test`.`participant` (`id`)
-    ON DELETE CASCADE)
+    REFERENCES `created_from_script_test`.`participant` (`id`) ON DELETE CASCADE)
 ENGINE = InnoDB
 DEFAULT CHARACTER SET = utf8mb4
 COLLATE = utf8mb4_0900_ai_ci;
@@ -274,12 +243,10 @@ CREATE TABLE IF NOT EXISTS `created_from_script_test`.`film_writers` (
   INDEX `film_id_fk_w_idx` (`film_id` ASC) VISIBLE,
   CONSTRAINT `film_id_fk_w`
     FOREIGN KEY (`film_id`)
-    REFERENCES `created_from_script_test`.`film` (`id`)
-    ON DELETE CASCADE,
+    REFERENCES `created_from_script_test`.`film` (`id`) ON DELETE CASCADE,
   CONSTRAINT `participant_id_fk_w`
     FOREIGN KEY (`participant_id`)
-    REFERENCES `created_from_script_test`.`participant` (`id`)
-    ON DELETE CASCADE)
+    REFERENCES `created_from_script_test`.`participant` (`id`) ON DELETE CASCADE)
 ENGINE = InnoDB
 DEFAULT CHARACTER SET = utf8mb4
 COLLATE = utf8mb4_0900_ai_ci;
@@ -304,12 +271,10 @@ CREATE TABLE IF NOT EXISTS `created_from_script_test`.`rating` (
   INDEX `account_id_fk_r_idx` (`account_id` ASC) VISIBLE,
   CONSTRAINT `account_id_fk_r`
     FOREIGN KEY (`account_id`)
-    REFERENCES `created_from_script_test`.`account` (`id`)
-    ON DELETE CASCADE,
+    REFERENCES `created_from_script_test`.`account` (`id`) ON DELETE CASCADE,
   CONSTRAINT `film_id_fk_r`
     FOREIGN KEY (`film_id`)
-    REFERENCES `created_from_script_test`.`film` (`id`)
-    ON DELETE CASCADE)
+    REFERENCES `created_from_script_test`.`film` (`id`) ON DELETE CASCADE)
 ENGINE = InnoDB
 DEFAULT CHARACTER SET = utf8mb4
 COLLATE = utf8mb4_0900_ai_ci;
