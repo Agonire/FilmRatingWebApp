@@ -9,6 +9,7 @@ import mvc.config.BeanConfiguration;
 import data.dao.account.IAccountDAO;
 import data.dao.role.IRoleDAO;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import java.lang.reflect.GenericArrayType;
 import java.util.List;
@@ -33,6 +34,9 @@ public class TestingHibernate {
         System.out.println(acc.getUsername());
         System.out.println(accountDAO.getRoles(acc).get(0).getRole());
 
+        BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
+
+        System.out.println(encoder.encode("admin"));
         System.out.println("done");
         context.close();
     }
