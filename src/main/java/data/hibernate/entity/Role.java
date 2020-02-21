@@ -1,6 +1,7 @@
 package data.hibernate.entity;
 
 import javax.persistence.*;
+import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -15,18 +16,13 @@ public class Role {
     @Column(name = "role")
     String role;
 
-    @OneToMany(mappedBy = "role")
-    Set<Account> accounts;
+    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @JoinTable(name = "account_roles",
+    joinColumns = {@JoinColumn(name = "role_id")},
+    inverseJoinColumns = {@JoinColumn(name = "account_id")})
+    List<Account> accounts;
 
     public Role() {
-    }
-
-    public Set<Account> getAccounts() {
-        return accounts;
-    }
-
-    public void setAccounts(Set<Account> accounts) {
-        this.accounts = accounts;
     }
 
     public Role(String role) {

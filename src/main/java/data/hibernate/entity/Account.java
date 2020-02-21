@@ -21,9 +21,11 @@ public class Account {
     @Column(name = "password")
     String password;
 
-    @ManyToOne
-    @JoinColumn(name = "role_id")
-    Role role;
+    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @JoinTable(name = "account_roles",
+    joinColumns = {@JoinColumn(name = "account_id")},
+    inverseJoinColumns = {@JoinColumn(name = "role_id")})
+    List<Role> roles;
 
     @Type(type = "numeric_boolean")
     @Column(name = "enabled")
@@ -41,14 +43,13 @@ public class Account {
     public Account() {
     }
 
-    public Account(String firstName, String lastName, Role role) {
-        this(firstName, lastName, role, false);
+    public Account(String firstName, String lastName) {
+        this(firstName, lastName, true);
     }
 
-    public Account(String firstName, String lastName, Role role, boolean enabled) {
+    public Account(String firstName, String lastName, boolean enabled) {
         this.username = firstName;
         this.password = lastName;
-        this.role = role;
         this.enabled = enabled;
     }
 
@@ -76,20 +77,20 @@ public class Account {
         this.password = password;
     }
 
-    public Role getRole() {
-        return role;
-    }
-
-    public void setRole(Role role) {
-        this.role = role;
-    }
-
     public boolean isEnabled() {
         return enabled;
     }
 
     public void setEnabled(boolean enabled) {
         this.enabled = enabled;
+    }
+
+    public List<Role> getRoles() {
+        return roles;
+    }
+
+    public void setRoles(List<Role> roles) {
+        this.roles = roles;
     }
 
     public List<Rating> getRates() {

@@ -2,6 +2,7 @@ package data.dao.account;
 
 import data.hibernate.entity.Account;
 import data.hibernate.entity.Comment;
+import data.hibernate.entity.Role;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -47,6 +48,16 @@ public class AccountDAO implements IAccountDAO{
 
     @Override
     @Transactional
+    public List<Role> getRoles(Account account) {
+        Session session = sessionFactory.getCurrentSession();
+
+        return session.createQuery("select r From Role r join r.accounts a where a.id = :id")
+                .setParameter("id", account.getId())
+                .list();
+    }
+
+    @Override
+    @Transactional
     public Account getAccount(int id) {
         Session session = sessionFactory.getCurrentSession();
 
@@ -72,5 +83,7 @@ public class AccountDAO implements IAccountDAO{
 
         session.remove(account);
     }
+
+
 
 }

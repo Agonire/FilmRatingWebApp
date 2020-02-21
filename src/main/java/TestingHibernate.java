@@ -27,7 +27,11 @@ public class TestingHibernate {
         IFilmDAO filmDAO = context.getBean(IFilmDAO.class);
         ICommentDAO commentDAO = context.getBean(ICommentDAO.class);
         IRatingDAO ratingDAO = context.getBean(IRatingDAO.class);
-        
+
+        Account acc = accountDAO.getAccount(2);
+
+        System.out.println(acc.getUsername());
+        System.out.println(accountDAO.getRoles(acc).get(0).getRole());
 
         System.out.println("done");
         context.close();

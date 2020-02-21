@@ -20,7 +20,7 @@ import javax.sql.DataSource;
 import java.util.Properties;
 
 @Configuration
-@EnableWebMvc
+//@EnableWebMvc
 @PropertySource(value = "classpath:db/db.properties")
 @EnableTransactionManagement
 @ComponentScan({"data.dao", "mvc"})
